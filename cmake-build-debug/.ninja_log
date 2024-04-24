@@ -1,0 +1,11 @@
+# ninja log v5
+7	55	7356711685029695	CMakeFiles/Advanced_Tree_Data_Structures.dir/Source/TwoThreeHeap.cpp.obj	2139bbedc11eeec9
+4	55	7356711685029695	CMakeFiles/Advanced_Tree_Data_Structures.dir/Source/FibonacciHeap.cpp.obj	7330bea00beb7313
+10	56	7356711685029695	CMakeFiles/Advanced_Tree_Data_Structures.dir/Source/BinaryHeap.cpp.obj	3cd355b8efd6488a
+0	240	7356711686861155	CMakeFiles/Advanced_Tree_Data_Structures.dir/main.cpp.obj	e79b7a590b754936
+241	320	7356711687650005	Advanced_Tree_Data_Structures.exe	6b4e7b58816c4272
+5	124	7356711988091155	CMakeFiles/Advanced_Tree_Data_Structures.dir/Source/BinaryHeap.cpp.obj	3cd355b8efd6488a
+1	259	7356711989449954	CMakeFiles/Advanced_Tree_Data_Structures.dir/main.cpp.obj	e79b7a590b754936
+260	318	7356711989998369	Advanced_Tree_Data_Structures.exe	6b4e7b58816c4272
+2	267	7356712078595783	CMakeFiles/Advanced_Tree_Data_Structures.dir/main.cpp.obj	e79b7a590b754936
+267	328	7356712079170230	Advanced_Tree_Data_Structures.exe	6b4e7b58816c4272
