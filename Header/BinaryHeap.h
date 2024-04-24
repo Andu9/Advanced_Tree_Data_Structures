@@ -31,6 +31,7 @@ class BinaryHeap {
         void changeKey(T val, int pos);
         void heapify(std::vector<T>& _heap);
         void eliminate(int pos);
+        void merge(BinaryHeap<T>& oth);
 };
 
 

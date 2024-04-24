@@ -99,5 +99,16 @@ void BinaryHeap<T>::eliminate(int pos) {
     }
 }
 
+template<typename T>
+void BinaryHeap<T>::merge(BinaryHeap<T>& oth) {
+    for (int i = 1; i < (int) oth.heap.size(); i += 1) {
+        heap.emplace_back(oth.heap[i]);
+    }
+
+    for (int i = heap.size() - 1; i >= 1; i -= 1) {
+        sift(i);
+    }
+}
+
 template class BinaryHeap<int>;
 
