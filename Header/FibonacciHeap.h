@@ -32,6 +32,7 @@ private:
     void consolidate();
     void heapLink(Node*, Node*);
     void removeFromList(Node*);
+    void mergeWithChildList(Node*, Node*);
     void cascadingCut();
 public:
     FibonacciHeap() : minNode{nullptr}, rootNode{nullptr}, size{0} {}
