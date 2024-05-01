@@ -5,16 +5,16 @@
 #include "FibonacciHeap.h"
 
 void FibonacciHeap::insert(int key) {
-     Node *newNode = new Node{key};
-     newNode->left = newNode;
-     newNode->right = newNode;
+    Node *newNode = new Node{key};
+    newNode->left = newNode;
+    newNode->right = newNode;
 
-     mergeWithRootList(newNode);
+    mergeWithRootList(newNode);
 
-     if (minNode == nullptr || newNode->key < minNode->key)
-         minNode = newNode;
+    if (minNode == nullptr || newNode->key < minNode->key)
+        minNode = newNode;
 
-     size++;
+    size++;
 }
 
 void FibonacciHeap::mergeWithRootList(Node *newNode) {
@@ -58,11 +58,22 @@ int FibonacciHeap::extractMin() {
 
         /// copiii nodului devin arbori noi
         if (minNode->child != nullptr) {
-            minNode->child->left->right = rootNode;
-            minNode->child->left = rootNode->left;
-            rootNode->left = minNode->child->left;
-            minNode->child->left->right = minNode->child;
+            /// copiii nu mai au parinti :(
+            Node *child = minNode->child;
+            do {
+                child->parent = nullptr;
+                child = child->right;
+            } while (child != minNode->child);
+
+            /// copiii integrati in lista (in societate)
+            Node* firstChild = minNode->child;
+            Node* lastChild = firstChild->left;
+            lastChild->right = minNode;
+            firstChild->left = minNode->left;
+            minNode->left->right = firstChild;
+            minNode->left = lastChild;
             minNode->child = nullptr;
+            minNode->degree = 0;
         }
 
         if (minNode->right == minNode) { /// era singurul nod in toata lista
@@ -71,7 +82,7 @@ int FibonacciHeap::extractMin() {
         }
         else {
             minNode = minNode->right; /// temporar, clar incorect
-            removeFromRootList(minNode->left);
+            removeFromRootList(temp);
             consolidate(); /// aici se stabileste adevarata valoare minima noua
         }
         size--;
@@ -102,10 +113,11 @@ std::ostream &operator<<(std::ostream &os, FibonacciHeap FH) {
 }
 
 void FibonacciHeap::consolidate() {
-    std::vector<Node *> a(int(log(size) * 2), nullptr);
+    std::vector<Node *> a(10, nullptr);
     Node *it = rootNode;
     do {
-        Node *urm = it->right;
+        if (it->key < minNode->key)
+            minNode = it;
         Node *x = it;
         int d = x->degree;
 
@@ -125,7 +137,7 @@ void FibonacciHeap::consolidate() {
         }
         a[d] = x;
 
-        it = urm;
+        it = x->right;
     } while (it != rootNode);
 
 }
@@ -199,5 +211,3 @@ int FibonacciHeap::deleteNode(Node *x) {
     decreaseKey(x, (-0x7fffffff - 1));
     return extractMin();
 }
-
-
