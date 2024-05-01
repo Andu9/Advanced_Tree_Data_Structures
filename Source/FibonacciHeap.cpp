@@ -9,7 +9,7 @@ void FibonacciHeap::insert(int key) {
      newNode->left = newNode;
      newNode->right = newNode;
 
-     mergeList(newNode);
+     mergeWithRootList(newNode);
 
      if (minNode == nullptr || newNode->key < minNode->key)
          minNode = newNode;
@@ -17,7 +17,7 @@ void FibonacciHeap::insert(int key) {
      size++;
 }
 
-void FibonacciHeap::mergeList(Node *newNode) {
+void FibonacciHeap::mergeWithRootList(Node *newNode) {
     if (rootNode == nullptr)
         rootNode = newNode;
     else {
@@ -36,11 +36,11 @@ bool FibonacciHeap::isEmpty() const {
     return size==0;
 }
 
-int FibonacciHeap::getSize() const {
+[[maybe_unused]] int FibonacciHeap::getSize() const {
     return size;
 }
 
-void FibonacciHeap::unionOperation(FibonacciHeap &other) {
+[[maybe_unused]] void FibonacciHeap::unionOperation(FibonacciHeap &other) {
     this->minNode = minNode->key < other.minNode->key ? minNode : other.minNode;
 
     Node *last = other.rootNode->left;
@@ -71,17 +71,16 @@ int FibonacciHeap::extractMin() {
         }
         else {
             minNode = minNode->right; /// temporar, clar incorect
-            removeFromList(minNode->left);
+            removeFromRootList(minNode->left);
             consolidate(); /// aici se stabileste adevarata valoare minima noua
         }
-
         size--;
         return temp->key;
     }
     return -1;
 }
 
-void FibonacciHeap::removeFromList(Node *x) {
+void FibonacciHeap::removeFromRootList(Node *x) {
     if (x == nullptr)
         return;
     if (x == rootNode)
@@ -100,41 +99,6 @@ std::ostream &operator<<(std::ostream &os, FibonacciHeap FH) {
         it = it->right;
     } while (it != FH.rootNode);
     return os;
-
-//    unvisited = deque()
-//    root_list = []
-//    marked_nodes = []
-//
-//    if self.root_list:
-//    for node in self.iterate(self.root_list):
-//    root_list.append(node.key)
-//    unvisited.append(node)
-//
-//    print('--------------------')
-//    print('-- Fibonacci Heap --')
-//    print('--------------------')
-//    print(f'Total nodes: {self.n}')
-//    print(f'Minimum: {self.min.key if self.min else None}')
-//    print(f'Root list node: {self.root_list.key}')
-//    print(f'Root list: {root_list}')
-//
-//    while unvisited:
-//        node = unvisited.popleft()
-//    if node.mark and (node.key not in marked_nodes):
-//    marked_nodes.append(node.key)
-//    if node.child:
-//    children = []
-//    for child in self.iterate(node.child):
-//    children.append(child.key)
-//    if child.child:
-//    unvisited.append(child)
-//    if child.mark and (child.key not in marked_nodes):
-//    marked_nodes.append(child.key)
-//    print(f'Children of {node.key}: {children}')
-//    if print_marked:
-//        print(f'Marked nodes: {marked_nodes}')
-//    print('--------------------\n')
-
 }
 
 void FibonacciHeap::consolidate() {
@@ -164,36 +128,15 @@ void FibonacciHeap::consolidate() {
         it = urm;
     } while (it != rootNode);
 
-//    for w in range(0, len(nodes)):
-//        x = nodes[w]
-//        d = x.degree
-//        while A[d] != None:
-//            y = A[d]
-//            if x.key > y.key:
-//                temp = x
-//                x, y = y, temp
-//            self.heap_link(y, x)
-//            A[d] = None
-//            d += 1
-//        A[d] = x
-
 }
 
 void FibonacciHeap::heapLink(Node *a, Node *b) {
-    removeFromList(b); /// scoate nodul b din lista
+    removeFromRootList(b); /// scoate nodul b din lista
 
     b->left = b->right = b;
     mergeWithChildList(a, b);
     a->degree++;
     b->parent = a;
-
-//    self.remove_from_root_list(y)
-//    y.left = y.right = y
-//    self.merge_with_child_list(x, y)
-//    x.degree += 1
-//    y.parent = x
-//    y.mark = False
-
 }
 
 void FibonacciHeap::mergeWithChildList(Node *parent, Node *newChild) {
@@ -206,14 +149,55 @@ void FibonacciHeap::mergeWithChildList(Node *parent, Node *newChild) {
         parent->child->right->left = newChild;
         parent->child->right = newChild;
     }
+}
 
-//    if parent.child is None:
-//    parent.child = node
-//    else:
-//    node.right = parent.child.right
-//    node.left = parent.child
-//    parent.child.right.left = node
-//    parent.child.right = node
+void FibonacciHeap::decreaseKey(Node *x, int k) {
+    if (k > x->key)
+        return;
+    x->key = k;
+    Node *y = x->parent;
+    if (y != nullptr && x->key < y->key) {/// proprietate de heap pierduta
+        cut(y, x); /// taie legatura dintre x si y, x este pus in root list
+        cascadingCut(y);
+    }
+    if (x->key < minNode->key)
+        minNode = x;
+}
+
+void FibonacciHeap::cut(Node *parent, Node *node) {
+    removeFromChildList(parent, node);
+    parent->degree--;
+    mergeWithRootList(node);
+    node->parent = nullptr;
+    node->marked = false;
+}
+
+void FibonacciHeap::cascadingCut(Node *node) {
+    Node* parent = node->parent;
+    if (parent != nullptr) {
+        if (!node->marked)
+            node->marked = true;
+        else {
+            cut(parent, node);
+            cascadingCut(parent);
+        }
+    }
+}
+
+void FibonacciHeap::removeFromChildList(Node *parent, Node *node) {
+    if (parent->child == parent->child->right) // exista doar un singur copil
+        parent->child = nullptr;
+    else if (parent->child == node) {
+        parent->child = node->right;
+        node->right->parent = parent;
+    }
+    node->left->right = node->right;
+    node->right->left = node->left;
+}
+
+int FibonacciHeap::deleteNode(Node *x) {
+    decreaseKey(x, (-0x7fffffff - 1));
+    return extractMin();
 }
 
 
