@@ -28,21 +28,28 @@ private:
     Node* minNode;
     int size;
 
-    void mergeList(Node*);
     void consolidate();
     void heapLink(Node*, Node*);
-    void removeFromList(Node*);
-    void mergeWithChildList(Node*, Node*);
-    void cascadingCut();
+    void mergeWithRootList(Node*);
+    void removeFromRootList(Node*);
+    static void mergeWithChildList(Node*, Node*);
+    static void removeFromChildList(Node*, Node*);
+    void cut(Node*, Node*);
+    void cascadingCut(Node*);
 public:
     FibonacciHeap() : minNode{nullptr}, rootNode{nullptr}, size{0} {}
     void insert(int);
-    void unionOperation(FibonacciHeap&);
+
+    [[maybe_unused]] void unionOperation(FibonacciHeap&);
     int extractMin();
-    void decreaseKey(Node*, int);
+
+    [[maybe_unused]] void decreaseKey(Node*, int);
+
+    [[maybe_unused]] int deleteNode(Node*);
     [[maybe_unused]] [[nodiscard]] int getMin() const;
     [[nodiscard]] bool isEmpty() const;
-    [[nodiscard]] int getSize() const;
+
+    [[maybe_unused]] [[nodiscard]] int getSize() const;
 
     friend std::ostream& operator<<(std::ostream&, FibonacciHeap);
 };
