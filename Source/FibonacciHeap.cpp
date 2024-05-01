@@ -2,10 +2,12 @@
 // Created by Cosmin on 24.04.2024.
 //
 
-#include "FibonacciHeap.h"
+#include "./Header/FibonacciHeap.h"
 
-void FibonacciHeap::insert(int key) {
-    Node *newNode = new Node{key};
+template<typename T>
+void FibonacciHeap<T>::insert(T key) {
+    auto *newNode = new Node{key};
+   // Node<T> *newNode = new Node{key};
     newNode->left = newNode;
     newNode->right = newNode;
 
@@ -17,7 +19,8 @@ void FibonacciHeap::insert(int key) {
     size++;
 }
 
-void FibonacciHeap::mergeWithRootList(Node *newNode) {
+template<typename T>
+void FibonacciHeap<T>::mergeWithRootList(Node<T> *newNode) {
     if (rootNode == nullptr)
         rootNode = newNode;
     else {
@@ -28,22 +31,26 @@ void FibonacciHeap::mergeWithRootList(Node *newNode) {
     }
 }
 
-[[maybe_unused]] int FibonacciHeap::getMin() const {
+template<typename T>
+[[maybe_unused]] T FibonacciHeap<T>::getMin() const {
     return minNode->key;
 }
 
-bool FibonacciHeap::isEmpty() const {
+template<typename T>
+[[maybe_unused]] bool FibonacciHeap<T>::isEmpty() const {
     return size==0;
 }
 
-[[maybe_unused]] int FibonacciHeap::getSize() const {
+template<typename T>
+[[maybe_unused]] int FibonacciHeap<T>::getSize() const {
     return size;
 }
 
-[[maybe_unused]] void FibonacciHeap::unionOperation(FibonacciHeap &other) {
+template<typename T>
+[[maybe_unused]] void FibonacciHeap<T>::unionOperation(FibonacciHeap &other) {
     this->minNode = minNode->key < other.minNode->key ? minNode : other.minNode;
 
-    Node *last = other.rootNode->left;
+    Node<T> *last = other.rootNode->left;
     other.rootNode->left = rootNode->left;
     rootNode->left->right = other.rootNode;
     rootNode->left = last;
@@ -52,46 +59,46 @@ bool FibonacciHeap::isEmpty() const {
     size += other.size;
 }
 
-int FibonacciHeap::extractMin() {
-    if (!isEmpty()) {
-        Node *temp = minNode;
+template<typename T>
+T FibonacciHeap<T>::extractMin() {
 
-        /// copiii nodului devin arbori noi
-        if (minNode->child != nullptr) {
-            /// copiii nu mai au parinti :(
-            Node *child = minNode->child;
-            do {
-                child->parent = nullptr;
-                child = child->right;
-            } while (child != minNode->child);
+    Node<T> *temp = minNode;
 
-            /// copiii integrati in lista (in societate)
-            Node* firstChild = minNode->child;
-            Node* lastChild = firstChild->left;
-            lastChild->right = minNode;
-            firstChild->left = minNode->left;
-            minNode->left->right = firstChild;
-            minNode->left = lastChild;
-            minNode->child = nullptr;
-            minNode->degree = 0;
-        }
+    /// copiii nodului devin arbori noi
+    if (minNode->child != nullptr) {
+        /// copiii nu mai au parinti :(
+        Node<T> *child = minNode->child;
+        do {
+            child->parent = nullptr;
+            child = child->right;
+        } while (child != minNode->child);
 
-        if (minNode->right == minNode) { /// era singurul nod in toata lista
-            minNode = nullptr;
-            rootNode = nullptr;
-        }
-        else {
-            minNode = minNode->right; /// temporar, clar incorect
-            removeFromRootList(temp);
-            consolidate(); /// aici se stabileste adevarata valoare minima noua
-        }
-        size--;
-        return temp->key;
+        /// copiii integrati in lista (in societate)
+        Node<T>* firstChild = minNode->child;
+        Node<T>* lastChild = firstChild->left;
+        lastChild->right = minNode;
+        firstChild->left = minNode->left;
+        minNode->left->right = firstChild;
+        minNode->left = lastChild;
+        minNode->child = nullptr;
+        minNode->degree = 0;
     }
-    return -1;
+
+    if (minNode->right == minNode) { /// era singurul nod in toata lista
+        minNode = nullptr;
+        rootNode = nullptr;
+    }
+    else {
+        minNode = minNode->right; /// temporar, clar incorect
+        removeFromRootList(temp);
+        consolidate(); /// aici se stabileste adevarata valoare minima noua
+    }
+    size--;
+    return temp->key;
 }
 
-void FibonacciHeap::removeFromRootList(Node *x) {
+template<typename T>
+void FibonacciHeap<T>::removeFromRootList(Node<T> *x) {
     if (x == nullptr)
         return;
     if (x == rootNode)
@@ -102,8 +109,9 @@ void FibonacciHeap::removeFromRootList(Node *x) {
     x->left->right = x->right;
 }
 
-std::ostream &operator<<(std::ostream &os, FibonacciHeap FH) {
-    Node *it = FH.rootNode;
+template<typename T>
+std::ostream &operator<<(std::ostream &os, FibonacciHeap<T> FH) {
+    Node<T> *it = FH.rootNode;
     do {
         os << it->key << "\n";
 
@@ -112,20 +120,21 @@ std::ostream &operator<<(std::ostream &os, FibonacciHeap FH) {
     return os;
 }
 
-void FibonacciHeap::consolidate() {
-    std::vector<Node *> a(10, nullptr);
-    Node *it = rootNode;
+template<typename T>
+void FibonacciHeap<T>::consolidate() {
+    std::vector<Node<T> *> a(10, nullptr);
+    Node<T> *it = rootNode;
     do {
         if (it->key < minNode->key)
             minNode = it;
-        Node *x = it;
+        Node<T> *x = it;
         int d = x->degree;
 
         while (a[d] != nullptr) {
-            Node *y = a[d];
+            Node<T> *y = a[d];
 
             if (x->key > y->key) {
-                Node *aux = x;
+                Node<T> *aux = x;
                 x = y;
                 y = aux;
             }
@@ -142,7 +151,8 @@ void FibonacciHeap::consolidate() {
 
 }
 
-void FibonacciHeap::heapLink(Node *a, Node *b) {
+template<typename T>
+void FibonacciHeap<T>::heapLink(Node<T> *a, Node<T> *b) {
     removeFromRootList(b); /// scoate nodul b din lista
 
     b->left = b->right = b;
@@ -151,7 +161,8 @@ void FibonacciHeap::heapLink(Node *a, Node *b) {
     b->parent = a;
 }
 
-void FibonacciHeap::mergeWithChildList(Node *parent, Node *newChild) {
+template<typename T>
+void FibonacciHeap<T>::mergeWithChildList(Node<T> *parent, Node<T> *newChild) {
 
     if (parent->child == nullptr) /// parintele nu are copii
         parent->child = newChild;
@@ -163,11 +174,12 @@ void FibonacciHeap::mergeWithChildList(Node *parent, Node *newChild) {
     }
 }
 
-void FibonacciHeap::decreaseKey(Node *x, int k) {
+template<typename T>
+void FibonacciHeap<T>::decreaseKey(Node<T> *x, int k) {
     if (k > x->key)
         return;
     x->key = k;
-    Node *y = x->parent;
+    Node<T> *y = x->parent;
     if (y != nullptr && x->key < y->key) {/// proprietate de heap pierduta
         cut(y, x); /// taie legatura dintre x si y, x este pus in root list
         cascadingCut(y);
@@ -176,7 +188,8 @@ void FibonacciHeap::decreaseKey(Node *x, int k) {
         minNode = x;
 }
 
-void FibonacciHeap::cut(Node *parent, Node *node) {
+template<typename T>
+void FibonacciHeap<T>::cut(Node<T> *parent, Node<T> *node) {
     removeFromChildList(parent, node);
     parent->degree--;
     mergeWithRootList(node);
@@ -184,8 +197,9 @@ void FibonacciHeap::cut(Node *parent, Node *node) {
     node->marked = false;
 }
 
-void FibonacciHeap::cascadingCut(Node *node) {
-    Node* parent = node->parent;
+template<typename T>
+void FibonacciHeap<T>::cascadingCut(Node<T> *node) {
+    Node<T> *parent = node->parent;
     if (parent != nullptr) {
         if (!node->marked)
             node->marked = true;
@@ -196,7 +210,8 @@ void FibonacciHeap::cascadingCut(Node *node) {
     }
 }
 
-void FibonacciHeap::removeFromChildList(Node *parent, Node *node) {
+template<typename T>
+void FibonacciHeap<T>::removeFromChildList(Node<T> *parent, Node<T> *node) {
     if (parent->child == parent->child->right) // exista doar un singur copil
         parent->child = nullptr;
     else if (parent->child == node) {
@@ -207,7 +222,11 @@ void FibonacciHeap::removeFromChildList(Node *parent, Node *node) {
     node->right->left = node->left;
 }
 
-int FibonacciHeap::deleteNode(Node *x) {
+template<typename T>
+T FibonacciHeap<T>::deleteNode(Node<T> *x) {
     decreaseKey(x, (-0x7fffffff - 1));
     return extractMin();
 }
+
+template class FibonacciHeap<int>;
+template class FibonacciHeap<float>;
