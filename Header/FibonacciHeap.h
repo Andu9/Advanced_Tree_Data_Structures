@@ -9,8 +9,9 @@
 #include <vector>
 #include <cmath>
 
+template<typename T>
 struct Node {
-    int key;
+    T key;
     Node *parent{nullptr};
     Node *child{nullptr};
     Node *left{nullptr};
@@ -19,35 +20,37 @@ struct Node {
     bool marked{false};
     int degree{0};
 
-    explicit Node(int k) : key(k) {}
+    explicit Node(T k) : key(k) {}
 };
 
+template<typename T>
 class FibonacciHeap {
 private:
-    Node* rootNode;
-    Node* minNode;
+    Node<T>* rootNode;
+    Node<T>* minNode;
     int size;
 
     void consolidate();
-    void heapLink(Node*, Node*);
-    void mergeWithRootList(Node*);
-    void removeFromRootList(Node*);
-    static void mergeWithChildList(Node*, Node*);
-    static void removeFromChildList(Node*, Node*);
-    void cut(Node*, Node*);
-    void cascadingCut(Node*);
+    void heapLink(Node<T>*, Node<T>*);
+    void mergeWithRootList(Node<T>*);
+    void removeFromRootList(Node<T>*);
+    static void mergeWithChildList(Node<T>*, Node<T>*);
+    static void removeFromChildList(Node<T>*, Node<T>*);
+    void cut(Node<T>*, Node<T>*);
+    void cascadingCut(Node<T>*);
 public:
     FibonacciHeap() : minNode{nullptr}, rootNode{nullptr}, size{0} {}
-    void insert(int);
+    void insert(T);
 
     [[maybe_unused]] void unionOperation(FibonacciHeap&);
-    int extractMin();
+    T extractMin();
 
-    [[maybe_unused]] void decreaseKey(Node*, int);
+    [[maybe_unused]] void decreaseKey(Node<T>*, int);
 
-    [[maybe_unused]] int deleteNode(Node*);
-    [[maybe_unused]] [[nodiscard]] int getMin() const;
-    [[nodiscard]] bool isEmpty() const;
+    [[maybe_unused]] T deleteNode(Node<T>*);
+    [[maybe_unused]] [[nodiscard]] T getMin() const;
+
+    [[maybe_unused]] [[nodiscard]] bool isEmpty() const;
 
     [[maybe_unused]] [[nodiscard]] int getSize() const;
 
