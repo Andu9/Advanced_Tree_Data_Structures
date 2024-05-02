@@ -49,7 +49,7 @@ template <typename T>
 class Heap23
 {
 public:
-    Heap23(int max_nodes = 100);
+    Heap23(int max_nodes = 100000000);
     ~Heap23();
 
     Node23<T> *insert(int key, T value);
