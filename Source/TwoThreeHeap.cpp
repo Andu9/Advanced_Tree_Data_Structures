@@ -569,3 +569,4 @@ void Heap23<T>::meld(Node23<T> *list)
         add_tree = next;
     } while (add_tree || carry_tree);
 }
+template class Heap23<int>;
