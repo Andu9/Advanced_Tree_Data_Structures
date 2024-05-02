@@ -2,7 +2,7 @@
 // Created by Cosmin on 24.04.2024.
 //
 
-#include "./Header/FibonacciHeap.h"
+#include "FibonacciHeap.h"
 
 template<typename T>
 void FibonacciHeap<T>::insert(T key) {
@@ -122,33 +122,99 @@ std::ostream &operator<<(std::ostream &os, FibonacciHeap<T> FH) {
 
 template<typename T>
 void FibonacciHeap<T>::consolidate() {
-    std::vector<Node<T> *> a(10, nullptr);
-    Node<T> *it = rootNode;
-    do {
-        if (it->key < minNode->key)
-            minNode = it;
-        Node<T> *x = it;
+
+    std::vector<Node<T> *> a(log(size) * 2, nullptr);
+    std::vector<Node<T> *> nodes;
+
+    Node<T> *node = rootNode;
+    Node<T> *stop = rootNode;
+
+    bool flag = false;
+
+    while (true) {
+        if (node == stop) {
+            if (flag)
+                break;
+            else
+                flag = true;
+        }
+        nodes.push_back(node);
+        node = node->right;
+    }
+
+    for (int i = 0; i < nodes.size(); ++i) {
+        Node<T> *x = nodes[i];
         int d = x->degree;
 
         while (a[d] != nullptr) {
             Node<T> *y = a[d];
-
             if (x->key > y->key) {
-                Node<T> *aux = x;
+                Node<T> *temp = x;
                 x = y;
-                y = aux;
+                y = temp;
             }
-
-            heapLink(x, y); /// pune arborele cu radacina y ca si copil al radacinii x
+            heapLink(x, y);
             a[d] = nullptr;
-            d++;
-
+            d += 1;
         }
         a[d] = x;
+    }
 
-        it = x->right;
-    } while (it != rootNode);
+    for (int i = 0; i < a.size(); ++i)
+        if (a[i] != nullptr)
+            if (a[i]->key < minNode->key)
+                minNode = a[i];
 
+//    Node<T> *it = rootNode;
+//    do {
+//        if (it->key < minNode->key)
+//            minNode = it;
+//        Node<T> *x = it;
+//        int d = x->degree;
+//
+//        while (a[d] != nullptr) {
+//            Node<T> *y = a[d];
+//
+//            if (x->key > y->key) {
+//                Node<T> *aux = x;
+//                x = y;
+//                y = aux;
+//            }
+//
+//            heapLink(x, y); /// pune arborele cu radacina y ca si copil al radacinii x
+//            a[d] = nullptr;
+//            d += 1;
+//            std::cout << "bucla infinita1";
+//        }
+//        a[d] = x;
+//        std::cout << "bucla infinita2";
+//        it = x->right;
+//    } while (it != rootNode);
+
+
+
+//    def consolidate(self):
+//    A = [None] * int(math.log(self.n) * 2)
+//    nodes = [w for w in self.iterate(self.root_list)]
+//    for w in range(0, len(nodes)):
+//      x = nodes[w]
+//      d = x.degree
+//    while A[d] != None:
+//    y = A[d]
+//    if x.key > y.key:
+//    temp = x
+//    x, y = y, temp
+//    self.heap_link(y, x)
+//    A[d] = None
+//    d += 1
+//    A[d] = x
+//# find new min node - no need to reconstruct new root list below
+//# because root list was iteratively changing as we were moving
+//# nodes around in the above loop
+//    for i in range(0, len(A)):
+//    if A[i] is not None:
+//    if A[i].key < self.min.key:
+//    self.min = A[i]
 }
 
 template<typename T>
@@ -230,3 +296,4 @@ T FibonacciHeap<T>::deleteNode(Node<T> *x) {
 
 template class FibonacciHeap<int>;
 template class FibonacciHeap<float>;
+template class FibonacciHeap<double>;
