@@ -164,57 +164,6 @@ void FibonacciHeap<T>::consolidate() {
         if (a[i] != nullptr)
             if (a[i]->key < minNode->key)
                 minNode = a[i];
-
-//    Node<T> *it = rootNode;
-//    do {
-//        if (it->key < minNode->key)
-//            minNode = it;
-//        Node<T> *x = it;
-//        int d = x->degree;
-//
-//        while (a[d] != nullptr) {
-//            Node<T> *y = a[d];
-//
-//            if (x->key > y->key) {
-//                Node<T> *aux = x;
-//                x = y;
-//                y = aux;
-//            }
-//
-//            heapLink(x, y); /// pune arborele cu radacina y ca si copil al radacinii x
-//            a[d] = nullptr;
-//            d += 1;
-//            std::cout << "bucla infinita1";
-//        }
-//        a[d] = x;
-//        std::cout << "bucla infinita2";
-//        it = x->right;
-//    } while (it != rootNode);
-
-
-
-//    def consolidate(self):
-//    A = [None] * int(math.log(self.n) * 2)
-//    nodes = [w for w in self.iterate(self.root_list)]
-//    for w in range(0, len(nodes)):
-//      x = nodes[w]
-//      d = x.degree
-//    while A[d] != None:
-//    y = A[d]
-//    if x.key > y.key:
-//    temp = x
-//    x, y = y, temp
-//    self.heap_link(y, x)
-//    A[d] = None
-//    d += 1
-//    A[d] = x
-//# find new min node - no need to reconstruct new root list below
-//# because root list was iteratively changing as we were moving
-//# nodes around in the above loop
-//    for i in range(0, len(A)):
-//    if A[i] is not None:
-//    if A[i].key < self.min.key:
-//    self.min = A[i]
 }
 
 template<typename T>
